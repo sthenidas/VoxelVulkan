@@ -15,7 +15,7 @@ git clone https://github.com/sthenidas/VoxelVulkan
 Now, moving inside the project directory, propagate the git submodules into your project.
 
 ```bash
-cd Vulkan
+cd VoxelVulkan
 git submodule init
 git submodule update
 ```
