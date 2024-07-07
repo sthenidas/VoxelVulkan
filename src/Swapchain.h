@@ -7,6 +7,10 @@ class Swapchain{
     public: 
         Swapchain(Device* device, Window* window );
         ~Swapchain();
+        void createSwapChain();
+        
+        void cleanupSwapChain();
+       
         
         VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
         VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
@@ -20,9 +24,11 @@ class Swapchain{
     private:
         Device* device;
         VkSwapchainKHR swapChain;
+        VkSurfaceKHR surface;
         GLFWwindow* window;
         uint32_t imageCount;
 
+       
 
         VkFormat swapChainImageFormat;
         VkExtent2D swapChainExtent;

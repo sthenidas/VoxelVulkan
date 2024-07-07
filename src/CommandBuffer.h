@@ -3,31 +3,35 @@
 #include "Device.h"
 #include "GraphicsPipeline.h"
 
+const int MAX_FRAMES_IN_FLIGHT = 2;
+
 class CommandBuffer{
     public:
         void createCommandPool();
-        void createCommandBuffer();
+        void createCommandBuffers();
         void createSyncObjects();
         void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
         CommandBuffer(Device* device, Swapchain* swapchain, GraphicsPipeline* graphicsPipeline);
         ~CommandBuffer();
 
-        void waitForAndResetFences();
+        void waitForFences();
+        void resetFences();
 
         void acquireNextImage();
 
         void submitCommandBuffer();
         
-
+        bool framebufferResized = false;
     private:
         VkCommandPool commandPool;
-        VkCommandBuffer commandBuffer;
+        std::vector<VkCommandBuffer> commandBuffers;
 
-        VkSemaphore imageAvailableSemaphore;
-        VkSemaphore renderFinishedSemaphore;
-        VkFence inFlightFence; 
+        std::vector<VkSemaphore> imageAvailableSemaphores;
+        std::vector<VkSemaphore> renderFinishedSemaphores;
+        std::vector<VkFence> inFlightFences; 
         
         uint32_t imageIndex;
+        uint32_t currentFrame = 0;
         
         Swapchain* swapchain;
         GraphicsPipeline* graphicsPipeline;

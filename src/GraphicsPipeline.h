@@ -12,6 +12,18 @@ class GraphicsPipeline{
         VkShaderModule createShaderModule(const std::vector<char>& code);
         void createRenderPass();
         void createFramebuffers();
+        void cleanupFramebuffers(){for (auto framebuffer : swapChainFramebuffers){
+            vkDestroyFramebuffer(device->device(),framebuffer,nullptr);
+        }}
+
+        void recreateSwapChain(){
+            vkDeviceWaitIdle(device->device());
+            cleanupFramebuffers();
+            swapchain->cleanupSwapChain();
+
+            swapchain->createSwapChain();
+            createFramebuffers();
+        }
     
         std::vector<VkFramebuffer> get_swapChainFramebuffers(){return swapChainFramebuffers;} 
         VkRenderPass get_renderPass(){return renderPass;}

@@ -26,9 +26,16 @@ public:
     {
         //initWindow();
         window = new Window();
+        glfwSetWindowUserPointer(window->get_pWindow(), this);
+        glfwSetFramebufferSizeCallback(window->get_pWindow(),framebufferResizeCallback);
+        
         initVulkan();
         mainLoop();
         cleanup();
+    }
+
+    void set_framebufferResized(bool newBool){
+        commandBuffer->framebufferResized = newBool;
     }
 
 private:   
@@ -37,7 +44,10 @@ private:
 
     
 
-    
+    static void framebufferResizeCallback(GLFWwindow* window, int width, int height){
+        auto app = reinterpret_cast<Application*>(glfwGetWindowUserPointer(window));
+        app->set_framebufferResized(true);
+    }
 
     void initVulkan()
     {
@@ -69,8 +79,15 @@ private:
 
     void drawFrame(){
         
-        commandBuffer->waitForAndResetFences();
+        int width = 0, height = 0;
+        glfwGetFramebufferSize(window->get_pWindow(),&width,&height);
+        while (width == 0 || height == 0){
+            glfwGetFramebufferSize(window->get_pWindow(),&width,&height);
+            glfwWaitEvents();
+        }
+        commandBuffer->waitForFences();
         commandBuffer->acquireNextImage();
+        commandBuffer->resetFences();
         commandBuffer->submitCommandBuffer();
     }
     void cleanup()
@@ -89,6 +106,8 @@ private:
         
     }
 
+   
+    
     // ---------- HELPER ---------- //
 
 private:

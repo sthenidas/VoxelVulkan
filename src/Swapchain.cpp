@@ -1,10 +1,15 @@
 #include "Swapchain.h"
 
 Swapchain::Swapchain(Device* newDevice, Window* windowobj){
-    
     window = windowobj->get_pWindow();
-    VkSurfaceKHR surface = windowobj->get_surface();
+    surface = windowobj->get_surface();
     device = newDevice;
+    createSwapChain();
+}
+
+void Swapchain::createSwapChain(){
+
+    
 
     SwapChainSupportDetails swapChainSupport = device->querySwapChainSupport();
     VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
@@ -16,6 +21,7 @@ Swapchain::Swapchain(Device* newDevice, Window* windowobj){
         imageCount = swapChainSupport.capabilities.maxImageCount;
     }
 
+    
     VkSwapchainCreateInfoKHR createInfo = {
         .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
         .surface = surface,
@@ -58,7 +64,6 @@ Swapchain::Swapchain(Device* newDevice, Window* windowobj){
         swapChainExtent = extent;
         createImageViews();
 }
-
 Swapchain::~Swapchain(){
     
     for (auto imageView : swapChainImageViews){
@@ -69,7 +74,16 @@ Swapchain::~Swapchain(){
 }
 
 
+
+void Swapchain::cleanupSwapChain(){
+    for (auto imageView: swapChainImageViews){
+        vkDestroyImageView(device->device(),imageView,nullptr);
+    }
+
+    vkDestroySwapchainKHR(device->device(),swapChain, nullptr);
+}
 VkSurfaceFormatKHR Swapchain::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats){
+
     for (const auto& availableFormat : availableFormats) {
         if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR){
             return availableFormat;

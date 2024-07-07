@@ -4,10 +4,13 @@ Window::Window(){
     glfwInit();
     
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
     window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", nullptr, nullptr);
+
 }
+
+
 
 Window::~Window(){
     vkDestroySurfaceKHR(instance->get_VkInstance(),surface,nullptr);
@@ -30,3 +33,5 @@ void Window::createSurface(Instance* newInstance){
             throw std::runtime_error("failed to create window surface!");
         }
 }
+
+
